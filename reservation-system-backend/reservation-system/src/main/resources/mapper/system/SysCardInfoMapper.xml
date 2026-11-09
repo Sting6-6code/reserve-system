@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.website.system.mapper.SysCardInfoMapper">
+
+    <resultMap type="SysCardInfo" id="SysCardInfoResult">
+        <result property="cardId"    column="card_id"    />
+        <result property="cardName"    column="card_name"    />
+        <result property="start"    column="start"    />
+        <result property="end"    column="end"    />
+        <result property="employeeId"    column="employee_id"    />
+        <result property="customId"    column="custom_id"    />
+        <result property="cardNum"    column="card_num"    />
+        <result property="serviceList"    column="service_list"    />
+        <result property="orderStatus"    column="order_status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="serviceGroup"    column="service_group"    />
+        <result property="payType"    column="pay_type"    />
+        <result property="payAmount"    column="pay_amount"    />
+        <result property="serviceWages"    column="service_wages"    />
+        <result property="payTime"    column="pay_time"    />
+    </resultMap>
+
+    <sql id="selectSysCardInfoVo">
+        select card_id,remark, (select concat(custom_nick_name,'(',custom_phone,')') from sys_custom_info where sys_custom_info.custom_id=sys_card_info.custom_id limit 1) as card_name,pay_time, service_wages,start, end,service_group,pay_type,pay_amount, employee_id, custom_id, card_num, service_list, order_status, create_by, create_time from sys_card_info
+    </sql>
+
+    <select id="selectSysCardInfoList" parameterType="SysCardInfo" resultMap="SysCardInfoResult">
+        <include refid="selectSysCardInfoVo"/>
+        <where>
+            <if test="cardName != null  and cardName != ''"> and card_name like concat('%', #{cardName}, '%')</if>
+            <if test="start != null  and start != ''"> and start like concat(#{start},'%')</if>
+            <if test="end != null  and end != ''"> and end = #{end}</if>
+            <if test="employeeId != null "> and employee_id = #{employeeId}</if>
+            <if test="customId != null "> and custom_id = #{customId}</if>
+            <if test="cardNum != null "> and card_num = #{cardNum}</if>
+            <if test="serviceList != null  and serviceList != ''"> and service_list = #{serviceList}</if>
+            <if test="orderStatus != null  and orderStatus != ''"> and order_status = #{orderStatus}</if>
+        </where>
+    </select>
+
+    <select id="selectSysCardInfoByCardId" parameterType="Long" resultMap="SysCardInfoResult">
+        <include refid="selectSysCardInfoVo"/>
+        where card_id = #{cardId}
+    </select>
+
+    <insert id="insertSysCardInfo" parameterType="SysCardInfo" useGeneratedKeys="true" keyProperty="cardId">
+        insert into sys_card_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cardName != null">card_name,</if>
+            <if test="start != null">start,</if>
+            <if test="end != null">end,</if>
+            <if test="employeeId != null">employee_id,</if>
+            <if test="customId != null">custom_id,</if>
+            <if test="cardNum != null">card_num,</if>
+            <if test="serviceList != null">service_list,</if>
+            <if test="payType != null">pay_type,</if>
+            <if test="payAmount != null">pay_amount,</if>
+            <if test="serviceGroup != null">service_group,</if>
+            <if test="orderStatus != null">order_status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="serviceWages != null">service_wages,</if>
+            <if test="payTime != null">pay_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cardName != null">#{cardName},</if>
+            <if test="start != null">#{start},</if>
+            <if test="end != null">#{end},</if>
+            <if test="employeeId != null">#{employeeId},</if>
+            <if test="customId != null">#{customId},</if>
+            <if test="cardNum != null">#{cardNum},</if>
+            <if test="serviceList != null">#{serviceList},</if>
+            <if test="payType != null">#{payType},</if>
+            <if test="payAmount != null">#{payAmount},</if>
+            <if test="serviceGroup != null">#{serviceGroup},</if>
+            <if test="orderStatus != null">#{orderStatus},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="serviceWages != null">#{serviceWages},</if>
+            <if test="payTime != null">#{payTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysCardInfo" parameterType="SysCardInfo">
+        update sys_card_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cardName != null">card_name = #{cardName},</if>
+            <if test="start != null">start = #{start},</if>
+            <if test="end != null">end = #{end},</if>
+            <if test="employeeId != null">employee_id = #{employeeId},</if>
+            <if test="customId != null">custom_id = #{customId},</if>
+            <if test="cardNum != null">card_num = #{cardNum},</if>
+            <if test="serviceList != null">service_list = #{serviceList},</if>
+            <if test="payType != null">pay_type=#{payType},</if>
+            <if test="payAmount != null">pay_amount=#{payAmount},</if>
+            <if test="serviceGroup != null">service_group=#{serviceGroup},</if>
+            <if test="orderStatus != null">order_status = #{orderStatus},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="serviceWages != null">service_wages=#{serviceWages},</if>
+            <if test="payTime != null">pay_time = #{payTime},</if>
+            <if test="remark != null">remark=#{remark},</if>
+        </trim>
+        where card_id = #{cardId}
+    </update>
+
+    <delete id="deleteSysCardInfoByCardId" parameterType="Long">
+        delete from sys_card_info where card_id = #{cardId}
+    </delete>
+
+    <delete id="deleteSysCardInfoByCardIds" parameterType="String">
+        delete from sys_card_info where card_id in
+        <foreach item="cardId" collection="array" open="(" separator="," close=")">
+            #{cardId}
+        </foreach>
+    </delete>
+
+    <select id="getEmployeeWages" parameterType="EmployeeWages" resultType="EmployeeWages">
+        select
+        <choose>
+        <when test="wagesTimeType=='M'.toString()">SUBSTR(sci.pay_time,1,7)</when>
+        <otherwise>SUBSTR(sci.pay_time,1,10)</otherwise></choose> AS wages_time,
+        sci.employee_id,sei.nick_name,sum(service_wages) as wages_money from sys_card_info sci
+        left join sys_employee_info sei on sci.employee_id=sei.employee_id
+        where sci.order_status=2 and sci.employee_id is not null
+        <if test="nickName!=null and nickName!=''">and sei.nick_name like concat('%',#{nickName},'%')</if>
+        <if test="wagesTime!=null and wagesTime!=''">and sci.pay_time like concat(#{wagesTime},'%')</if>
+        group by sci.employee_id,
+        <choose>
+            <when test="wagesTimeType=='M'.toString()">SUBSTR(sci.pay_time,1,7)</when>
+            <otherwise>SUBSTR(sci.pay_time,1,10)</otherwise>
+        </choose>
+
+    </select>
+
+
+    <select id="getServiceStatistics" parameterType="ServiceStatistics" resultType="ServiceStatistics">
+        select
+            <choose>
+                <when test="payTimeType=='M'.toString()">SUBSTR(sco.pay_time,1,7)</when>
+                <otherwise>SUBSTR(sco.pay_time,1,10)</otherwise>
+            </choose>
+        AS pay_time,GROUP_CONCAT(sco.card_id) as card_id,sci.service_wages,sci.service_group,sco.pay_type,sco.pay_amount,count(1) as count from sys_card_order sco left join sys_card_info sci on sco.card_id=sci.card_id
+        <where>
+            <if test="employeeId!=null">and sci.employee_id = #{employeeId}</if>
+            <if test="payTime!=null and payTime!=''">and sco.pay_time like concat(#{payTime},'%')</if>
+        </where>
+        GROUP BY sci.service_group,sco.pay_type,sco.pay_amount,
+        <choose>
+            <when test="payTimeType=='M'.toString()">SUBSTR(sco.pay_time,1,7)</when>
+            <otherwise>SUBSTR(sco.pay_time,1,10)</otherwise>
+        </choose>
+        order by sci.service_group,card_id,sco.pay_type
+    </select>
+
+    <!-- 查询客户历史信息（第一次服务日期和最近一次服务信息） -->
+    <select id="getCustomerHistoryInfo" parameterType="Long" resultType="com.website.system.domain.CustomerHistoryInfo">
+        SELECT 
+            (SELECT DATE_FORMAT(MIN(start), '%Y-%m-%d') FROM sys_card_info WHERE custom_id = #{customId} AND start IS NOT NULL) AS firstServiceDate,
+            (SELECT DATE_FORMAT(start, '%Y-%m-%d') FROM sys_card_info WHERE custom_id = #{customId} AND start IS NOT NULL AND service_list IS NOT NULL AND service_list != '' AND service_list != 'null' ORDER BY start DESC LIMIT 1) AS latestServiceDate,
+            (SELECT service_list FROM sys_card_info WHERE custom_id = #{customId} AND start IS NOT NULL AND service_list IS NOT NULL AND service_list != '' AND service_list != 'null' ORDER BY start DESC LIMIT 1) AS latestServiceName,
+            (SELECT CASE WHEN sei.nick_name IS NULL OR sei.nick_name = '' THEN 'NAN' ELSE sei.nick_name END 
+             FROM sys_card_info sci 
+             LEFT JOIN sys_employee_info sei ON sci.employee_id = sei.employee_id 
+             WHERE sci.custom_id = #{customId} 
+             AND sci.start IS NOT NULL 
+             ORDER BY sci.start DESC LIMIT 1) AS latestEmployeeName
+    </select>
+
+</mapper>

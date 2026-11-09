@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.website.system.mapper.SysGiftCardTypeInfoMapper">
+    
+    <resultMap type="SysGiftCardTypeInfo" id="SysGiftCardTypeInfoResult">
+        <result property="giftCardTypeId"    column="gift_card_type_id"    />
+        <result property="giftCardTypeName"    column="gift_card_type_name"    />
+        <result property="giftCardSellPrice"    column="gift_card_sell_price"    />
+        <result property="giftCardDeductionPrice"    column="gift_card_deduction_price"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+    </resultMap>
+
+    <sql id="selectSysGiftCardTypeInfoVo">
+        select gift_card_type_id, gift_card_type_name, gift_card_sell_price, gift_card_deduction_price, create_time, create_by from sys_gift_card_type_info
+    </sql>
+
+    <select id="selectSysGiftCardTypeInfoList" parameterType="SysGiftCardTypeInfo" resultMap="SysGiftCardTypeInfoResult">
+        <include refid="selectSysGiftCardTypeInfoVo"/>
+        <where>  
+            <if test="giftCardTypeName != null  and giftCardTypeName != ''"> and gift_card_type_name like concat('%', #{giftCardTypeName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectSysGiftCardTypeInfoByGiftCardTypeId" parameterType="Long" resultMap="SysGiftCardTypeInfoResult">
+        <include refid="selectSysGiftCardTypeInfoVo"/>
+        where gift_card_type_id = #{giftCardTypeId}
+    </select>
+        
+    <insert id="insertSysGiftCardTypeInfo" parameterType="SysGiftCardTypeInfo" useGeneratedKeys="true" keyProperty="giftCardTypeId">
+        insert into sys_gift_card_type_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="giftCardTypeName != null and giftCardTypeName != ''">gift_card_type_name,</if>
+            <if test="giftCardSellPrice != null">gift_card_sell_price,</if>
+            <if test="giftCardDeductionPrice != null">gift_card_deduction_price,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="giftCardTypeName != null and giftCardTypeName != ''">#{giftCardTypeName},</if>
+            <if test="giftCardSellPrice != null">#{giftCardSellPrice},</if>
+            <if test="giftCardDeductionPrice != null">#{giftCardDeductionPrice},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysGiftCardTypeInfo" parameterType="SysGiftCardTypeInfo">
+        update sys_gift_card_type_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="giftCardTypeName != null and giftCardTypeName != ''">gift_card_type_name = #{giftCardTypeName},</if>
+            <if test="giftCardSellPrice != null">gift_card_sell_price = #{giftCardSellPrice},</if>
+            <if test="giftCardDeductionPrice != null">gift_card_deduction_price = #{giftCardDeductionPrice},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+        </trim>
+        where gift_card_type_id = #{giftCardTypeId}
+    </update>
+
+    <delete id="deleteSysGiftCardTypeInfoByGiftCardTypeId" parameterType="Long">
+        delete from sys_gift_card_type_info where gift_card_type_id = #{giftCardTypeId}
+    </delete>
+
+    <delete id="deleteSysGiftCardTypeInfoByGiftCardTypeIds" parameterType="String">
+        delete from sys_gift_card_type_info where gift_card_type_id in 
+        <foreach item="giftCardTypeId" collection="array" open="(" separator="," close=")">
+            #{giftCardTypeId}
+        </foreach>
+    </delete>
+</mapper>

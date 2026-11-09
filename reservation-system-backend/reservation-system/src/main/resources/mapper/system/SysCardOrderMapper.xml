@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.website.system.mapper.SysCardOrderMapper">
+
+    <resultMap type="SysCardOrder" id="SysCardOrderResult">
+        <result property="cardId"    column="card_id"    />
+        <result property="payAmount"    column="pay_amount"    />
+        <result property="payType"    column="pay_type"    />
+        <result property="payTime"    column="pay_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="giftCard"    column="gift_card"    />
+
+    </resultMap>
+
+    <sql id="selectSysCardOrderVo">
+        select card_id, pay_amount, pay_type, gift_card,pay_time, create_time, create_by from sys_card_order
+    </sql>
+
+    <select id="selectSysCardOrderList" parameterType="SysCardOrder" resultMap="SysCardOrderResult">
+        <include refid="selectSysCardOrderVo"/>
+        <where>
+            <if test="cardId != null "> and card_id = #{cardId}</if>
+            <if test="payType != null  and payType != ''"> and pay_type = #{payType}</if>
+            <if test="payTime != null  and payTime != ''"> and pay_time like concat(#{payTime},'%') </if>
+        </where>
+    </select>
+
+    <select id="selectSysCardOrderByCardId" parameterType="Long" resultMap="SysCardOrderResult">
+        <include refid="selectSysCardOrderVo"/>
+        where card_id = #{cardId}
+    </select>
+
+    <insert id="insertSysCardOrder" parameterType="SysCardOrder">
+        insert into sys_card_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cardId != null">card_id,</if>
+            <if test="payAmount != null">pay_amount,</if>
+            <if test="payType != null and payType != ''">pay_type,</if>
+            <if test="payTime != null">pay_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="giftCard != null">gift_card,</if>
+
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cardId != null">#{cardId},</if>
+            <if test="payAmount != null">#{payAmount},</if>
+            <if test="payType != null and payType != ''">#{payType},</if>
+            <if test="payTime != null">#{payTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="giftCard != null">#{giftCard},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysCardOrder" parameterType="SysCardOrder">
+        update sys_card_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="payAmount != null">pay_amount = #{payAmount},</if>
+            <if test="payType != null and payType != ''">pay_type = #{payType},</if>
+            <if test="payTime != null">pay_time = #{payTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="giftCard != null">gift_card= #{giftCard},</if>
+        </trim>
+        where card_id = #{cardId}
+    </update>
+
+    <delete id="deleteSysCardOrderByCardId" parameterType="Long">
+        delete from sys_card_order where card_id = #{cardId}
+    </delete>
+
+    <delete id="deleteSysCardOrderByCardIds" parameterType="String">
+        delete from sys_card_order where card_id in
+        <foreach item="cardId" collection="array" open="(" separator="," close=")">
+            #{cardId}
+        </foreach>
+    </delete>
+
+    <select id="selectCardPayAmount" parameterType="SysCardOrder" resultType="GiftCardPayAmount">
+
+        select
+            sum(pay_amount) as total,
+            sum(IF(pay_type='现金支付',pay_amount,0)) as xj,
+            sum(IF(pay_type<![CDATA[<>]]>'现金支付',pay_amount,0)) as fxj,
+            sum(IF(pay_type='电子支付',pay_amount,0)) as dz,
+            sum(IF(pay_type='刷卡支付',pay_amount,0)) as sk
+
+        from sys_card_order where pay_type<![CDATA[<>]]>'礼品卡支付'
+        <if test="payTime != null  and payTime != ''"> and pay_time like concat('%', #{payTime}, '%')</if>
+    </select>
+
+</mapper>

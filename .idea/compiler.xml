@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <excludeFromCompile>
+      <directory url="file://$PROJECT_DIR$/reservation-system-backend/message-twilio/src/main/resources/archetype-resources" includeSubdirectories="true" />
+    </excludeFromCompile>
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="reservation-admin" />
+        <module name="message-twilio" />
+        <module name="reservation-common" />
+        <module name="reservation-generator" />
+        <module name="reservation-system" />
+        <module name="reservation-framework" />
+        <module name="reservation-quartz" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>

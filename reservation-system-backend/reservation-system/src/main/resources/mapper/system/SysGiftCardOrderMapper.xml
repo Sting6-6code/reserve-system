@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.website.system.mapper.SysGiftCardOrderMapper">
+
+    <resultMap type="SysGiftCardOrder" id="SysGiftCardOrderResult">
+        <result property="giftCardCode"    column="gift_card_code"    />
+        <result property="giftCardPayType"    column="gift_card_pay_type"    />
+        <result property="giftCardPayAmount"    column="gift_card_pay_amount"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="payTime"    column="pay_time"    />
+    </resultMap>
+
+    <sql id="selectSysGiftCardOrderVo">
+        select gift_card_code,pay_time, gift_card_pay_type, gift_card_pay_amount, create_time, create_by from sys_gift_card_order
+    </sql>
+
+    <select id="selectSysGiftCardOrderList" parameterType="SysGiftCardOrder" resultMap="SysGiftCardOrderResult">
+        <include refid="selectSysGiftCardOrderVo"/>
+        <where>
+            <if test="giftCardCode != null  and giftCardCode != ''"> and gift_card_code like concat('%', #{giftCardCode}, '%')</if>
+            <if test="payTime != null  and payTime != ''"> and pay_time like concat('%', #{payTime}, '%')</if>
+            <if test="giftCardPayType != null  and giftCardPayType != ''"> and gift_card_pay_type = #{giftCardPayType}</if>
+        </where>
+    </select>
+
+    <select id="selectSysGiftCardOrderByGiftCardCode" parameterType="String" resultMap="SysGiftCardOrderResult">
+        <include refid="selectSysGiftCardOrderVo"/>
+        where gift_card_code = #{giftCardCode}
+    </select>
+
+    <insert id="insertSysGiftCardOrder" parameterType="SysGiftCardOrder">
+        insert into sys_gift_card_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="giftCardCode != null">gift_card_code,</if>
+            <if test="giftCardPayType != null">gift_card_pay_type,</if>
+            <if test="giftCardPayAmount != null">gift_card_pay_amount,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="payTime != null">pay_time,</if>
+
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="giftCardCode != null">#{giftCardCode},</if>
+            <if test="giftCardPayType != null">#{giftCardPayType},</if>
+            <if test="giftCardPayAmount != null">#{giftCardPayAmount},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="payTime != null">#{payTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysGiftCardOrder" parameterType="SysGiftCardOrder">
+        update sys_gift_card_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="giftCardPayType != null">gift_card_pay_type = #{giftCardPayType},</if>
+            <if test="giftCardPayAmount != null">gift_card_pay_amount = #{giftCardPayAmount},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="payTime != null">pay_time=#{payTime},</if>
+        </trim>
+        where gift_card_code = #{giftCardCode}
+    </update>
+
+    <delete id="deleteSysGiftCardOrderByGiftCardCode" parameterType="String">
+        delete from sys_gift_card_order where gift_card_code = #{giftCardCode}
+    </delete>
+
+    <delete id="deleteSysGiftCardOrderByGiftCardCodes" parameterType="String">
+        delete from sys_gift_card_order where gift_card_code in
+        <foreach item="giftCardCode" collection="array" open="(" separator="," close=")">
+            #{giftCardCode}
+        </foreach>
+    </delete>
+
+    <select id="selectGiftCardPayAmount" parameterType="SysGiftCardOrder" resultType="GiftCardPayAmount">
+        select
+            sum(gift_card_pay_amount) as total,
+            sum(IF(gift_card_pay_type='现金支付',gift_card_pay_amount,0)) as xj,
+            sum(IF(gift_card_pay_type<![CDATA[<>]]>'现金支付',gift_card_pay_amount,0)) as fxj,
+            sum(IF(gift_card_pay_type='电子支付',gift_card_pay_amount,0)) as dz,
+            sum(IF(gift_card_pay_type='刷卡支付',gift_card_pay_amount,0)) as sk
+        from sys_gift_card_order
+        <where>
+            <if test="payTime != null  and payTime != ''"> and pay_time like concat('%', #{payTime}, '%')</if>
+        </where>
+
+
+    </select>
+</mapper>

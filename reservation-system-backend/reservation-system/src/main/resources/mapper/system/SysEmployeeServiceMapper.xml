@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.website.system.mapper.SysEmployeeServiceMapper">
+    
+    <resultMap type="SysEmployeeService" id="SysEmployeeServiceResult">
+        <result property="serviceId"    column="service_id"    />
+        <result property="employeeId"    column="employee_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+    </resultMap>
+
+    <sql id="selectSysEmployeeServiceVo">
+        select service_id, employee_id, create_time, create_by from sys_employee_service
+    </sql>
+
+    <select id="selectSysEmployeeServiceList" parameterType="SysEmployeeService" resultMap="SysEmployeeServiceResult">
+        <include refid="selectSysEmployeeServiceVo"/>
+        <where>  
+        </where>
+    </select>
+    
+    <select id="selectSysEmployeeServiceByServiceId" parameterType="Long" resultMap="SysEmployeeServiceResult">
+        <include refid="selectSysEmployeeServiceVo"/>
+        where service_id = #{serviceId}
+    </select>
+        
+    <insert id="insertSysEmployeeService" parameterType="SysEmployeeService">
+        insert into sys_employee_service
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="serviceId != null">service_id,</if>
+            <if test="employeeId != null">employee_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="serviceId != null">#{serviceId},</if>
+            <if test="employeeId != null">#{employeeId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysEmployeeService" parameterType="SysEmployeeService">
+        update sys_employee_service
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="employeeId != null">employee_id = #{employeeId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+        </trim>
+        where service_id = #{serviceId}
+    </update>
+
+    <delete id="deleteSysEmployeeServiceByServiceId" parameterType="Long">
+        delete from sys_employee_service where service_id = #{serviceId}
+    </delete>
+
+    <delete id="deleteSysEmployeeServiceByServiceIds" parameterType="String">
+        delete from sys_employee_service where service_id in 
+        <foreach item="serviceId" collection="array" open="(" separator="," close=")">
+            #{serviceId}
+        </foreach>
+    </delete>
+</mapper>

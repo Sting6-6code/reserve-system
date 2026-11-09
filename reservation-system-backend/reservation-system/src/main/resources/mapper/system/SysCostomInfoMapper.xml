@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.website.system.mapper.SysCostomInfoMapper">
+
+    <resultMap type="SysCostomInfo" id="SysCostomInfoResult">
+        <result property="customId"    column="custom_id"    />
+        <result property="customUserName"    column="custom_user_name"    />
+        <result property="customNickName"    column="custom_nick_name"    />
+        <result property="customPassword"    column="custom_password"    />
+        <result property="customAvatar"    column="custom_avatar"    />
+        <result property="customAddress"    column="custom_address"    />
+        <result property="customPhone"    column="custom_phone"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+    </resultMap>
+
+    <sql id="selectSysCostomInfoVo">
+        select custom_id, custom_user_name, custom_nick_name, custom_password, custom_avatar, custom_address, custom_phone, create_time, create_by from sys_custom_info
+    </sql>
+
+    <select id="selectSysCostomInfoList" parameterType="SysCostomInfo" resultMap="SysCostomInfoResult">
+        <include refid="selectSysCostomInfoVo"/>
+        <where>
+            <if test="customNickName != null  and customNickName != ''"> and custom_nick_name like concat('%', #{customNickName}, '%')</if>
+            <if test="customPhone != null  and customPhone != ''"> and custom_phone like concat('%', #{customPhone}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectSysCostomInfoByCustomId" parameterType="Long" resultMap="SysCostomInfoResult">
+        <include refid="selectSysCostomInfoVo"/>
+        where custom_id = #{customId}
+    </select>
+
+    <insert id="insertSysCostomInfo" parameterType="SysCostomInfo" useGeneratedKeys="true" keyProperty="customId">
+        insert into sys_custom_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="customUserName != null">custom_user_name,</if>
+            <if test="customNickName != null">custom_nick_name,</if>
+            <if test="customPassword != null">custom_password,</if>
+            <if test="customAvatar != null">custom_avatar,</if>
+            <if test="customAddress != null">custom_address,</if>
+            <if test="customPhone != null and customPhone != ''">custom_phone,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="customUserName != null">#{customUserName},</if>
+            <if test="customNickName != null">#{customNickName},</if>
+            <if test="customPassword != null">#{customPassword},</if>
+            <if test="customAvatar != null">#{customAvatar},</if>
+            <if test="customAddress != null">#{customAddress},</if>
+            <if test="customPhone != null and customPhone != ''">#{customPhone},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysCostomInfo" parameterType="SysCostomInfo">
+        update sys_custom_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="customUserName != null">custom_user_name = #{customUserName},</if>
+            <if test="customNickName != null">custom_nick_name = #{customNickName},</if>
+            <if test="customPassword != null">custom_password = #{customPassword},</if>
+            <if test="customAvatar != null">custom_avatar = #{customAvatar},</if>
+            <if test="customAddress != null">custom_address = #{customAddress},</if>
+            <if test="customPhone != null and customPhone != ''">custom_phone = #{customPhone},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+        </trim>
+        where custom_id = #{customId}
+    </update>
+
+    <delete id="deleteSysCostomInfoByCustomId" parameterType="Long">
+        delete from sys_custom_info where custom_id = #{customId}
+    </delete>
+
+    <delete id="deleteSysCostomInfoByCustomIds" parameterType="String">
+        delete from sys_custom_info where custom_id in
+        <foreach item="customId" collection="array" open="(" separator="," close=")">
+            #{customId}
+        </foreach>
+    </delete>
+</mapper>
